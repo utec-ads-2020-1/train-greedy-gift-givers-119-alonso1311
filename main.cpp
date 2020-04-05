@@ -1,52 +1,47 @@
 #include<iostream>
-#include<map>
-#include<stdio.h>
+#include<unordered_map>
+#include<string>
+#include<sstream>
+#include<vector>
 
 using namespace std;
 
 int main() {
+    unordered_map<string, int> people;
     int number_of_people;        
-    scanf("%d", &number_of_people);
+    cin >> number_of_people; cin.ignore();
 
-    map<string, int> people;
+    string line, name;
+    getline(cin, line, '\n');
 
-    for(; number_of_people > 0; --number_of_people){
-        string name;
-        cin >> name;
+    stringstream s(line);
+    while(getline(s, name, ' '))
         people.insert(make_pair(name, 0));
-    }
-
-    cin.ignore('\n');
-
-    for(; number_of_people > 0; --number_of_people){
-        string name;
-        int spend, number;
-        cin >> name >> spend >> number;
-
-        string array[number];
-        
-        for(int i = 0; i < number; ++number){
-            string names;
-            cin >> names;
-            array[i] = names;
-        }
-
-        cin.ignore('\n');
-
-        cout << name << '\t' << spend << '\t' << number << '\t';
-        for(auto i : array){
-            cout << i << endl;
-        }
-    }
-    cin.ignore('\n');
-
-    cout << "Map: \n";
-    for(auto it = people.begin(); it != people.end(); ++it){
-        cout << it->first << '\t' << it->second << endl;
-    }
     
+    for(int i = 0; i < number_of_people; ++i){
+        vector<string> to_lines;
+        string word;
+        getline(cin, line, '\n');
+        stringstream ss(line);
+        while(getline(ss, word, ' '))
+            to_lines.push_back(word);
 
-    //printf("The number is %d", number_of_people);
+        int expense_per_person = stoi(to_lines[1])/stoi(to_lines[2]);
+        
+        auto search_1 = people.find(*begin(to_lines));
+        if(search_1 != end(people))
+            search_1->second -= (expense_per_person*stoi(to_lines[2]));
+       
+        for(auto it = next(begin(to_lines), 3); it != end(to_lines); it++) {
+            auto search_2 = people.find(*it);
+            if(search_2 != end(people))
+                search_2->second += expense_per_person;
+        }
+    }
 
+    for(auto it = people.begin(); it != people.end(); ++it)
+        cout << it->first << ' ' << it->second << endl;
+    
+    
     return 0;
 }
